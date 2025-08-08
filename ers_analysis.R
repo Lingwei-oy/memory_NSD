@@ -1,3 +1,5 @@
+# created by Lingwei Ouyang for Neurohackademy project on August 8th, 2025
+# analyze RSA results
 getwd()
 library(stringr)
 library(dplyr)
@@ -17,14 +19,6 @@ View(all_rsa)
 
 length(unique(all_rsa$X73KID))
 
-
-# multilevel model for roi and activation value
-
-result <- lmer(rsa ~ roi*trial_type*phase + (1| subject), data = all_rsa)
-emmeans(result, pairwise ~ trial_type | phase | roi, contrast = 'consec')
-emmeans(result, pairwise ~ trial_type * phase | roi, interaction = 'consec')
-emmeans(result, pairwise ~ trial_type * phase * roi, interaction = 'consec')
-
 colnames(all_rsa)
 # plot rsa, for retrieval 1 and retrieval 2
 # for retrieval 1, separate by representation type
@@ -33,7 +27,7 @@ colnames(all_rsa)
 # average over X73KID
 
 
-#------data preparation------
+#------data examination------
 all_rsa
 all_rsa_long <- all_rsa %>%
     pivot_longer(names_to = 'rsa_time', values_to = 'rsa', cols = c('enc_ret1', 'enc_ret2', 'ret1_ret2')) %>%
@@ -42,12 +36,6 @@ all_rsa_long <- all_rsa %>%
 all_rsa_long %>%
     group_by(SUBJECT) %>%
     summarise(n = length(unique(X73KID)))
-unique(all_rsa$X73KID)
-sum(is.na(all_rsa_long))
-all_rsa_long[!complete.cases(all_rsa_long), 1]
-rsa_sub <- all_rsa_long %>%
-    group_by(SUBJECT,ROI, rep_time) %>%
-    summarise(mean_rsa = mean(rsa, na.rm = T))
 
 #------RSA------
 # averaged across stimuli
